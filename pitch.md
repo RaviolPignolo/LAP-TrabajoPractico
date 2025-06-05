@@ -19,6 +19,6 @@
 
 6_ Los controles serán las flechas Up, Down, Right, Left. Con éstos los jugadores podrán elegir qué acciones hacer y seleccionar en la cuadrilla.
 
-7_ 
+7_ Idealmente una vista isometrica con 2D asemejandose al término 2.5D. Practicamente haré que los personajes se representen con sus iconos de League of Legends, aunque creo que puedo hacer sprites 2D para animar en estilo pixel-art.
 
 8_ Primero desarrollaría la estructura principal de los personajes e items, como sus estadísticas, nombres, inventario, y habilidades para los campeones y alguno items. Luego, los cálculos de daño, e incrementos y decrementos de estadisticas por diferentes condiciones como habilidades o agregar o quitar items. Por ultimo armaría la escena de batalla y empezaría a implementar el movimiento, rangos, colisiones, y el entorno de usuario para que controle las acciones.
