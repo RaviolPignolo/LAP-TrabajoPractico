@@ -17,9 +17,19 @@ Simula un 1v1 entre los 170 campeones de League of Legends actualizado al parche
     pip install -r requirements.txt
 ```
 
-## Usage
-
 ## Tests
+
+- Podes ejectutar todos los test con el comando
+
+```python
+    python3 -m unittest discover tests/.
+```
+
+- O puedes hacer tests individuales con el comando
+
+```python
+    python3 -m unittest tests.test_champion.TestChampion.nombre_del_test
+```
 
 ## Authors
 
