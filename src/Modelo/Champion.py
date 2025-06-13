@@ -124,6 +124,9 @@ class Champion:
         self.actual_mana = self.base_mana
         self.actual_mana_regen = self.base_mana_regen
         self.actual_max_mana = self.base_mana
+        self.actual_energy = self.base_energy
+        self.actual_energy_regen = self.base_energy_regen
+        self.actual_max_energy = self.base_energy
         self.actual_ad = self.base_ad
         self.actual_armor = self.base_armor
         self.actual_mr = self.base_mr
@@ -330,8 +333,9 @@ class Champion:
         Champion.actual_hp = max(Champion.actual_hp, 0) #Evita que la vida sea negativa
     
     # Éstos métodos de habilidades están pensados para ser sobre-escritos
-    def aa(self):
+    def aa(self, objetivo):
         """Método para ataque básico"""
+        self.damage(self.actual_ad, "AD", objetivo)
     
     def p(self):
         """Método para habildiad pasiva"""

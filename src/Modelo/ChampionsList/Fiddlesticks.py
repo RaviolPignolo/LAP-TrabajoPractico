@@ -1,6 +1,6 @@
 from src.Modelo.Champion import Champion
 
-class FiddleSticks(Champion):
+class Fiddlesticks(Champion):
     def __init__(self):
         super().__init__(
             name = "FiddleSticks",
@@ -13,7 +13,7 @@ class FiddleSticks(Champion):
             base_mana = 500,
             base_mana_g = 28,
             base_mana_regen = 8,
-            base_mana_regen_regen = 0.8,
+            base_mana_regen_g = 0.8,
             base_energy = 0,
             base_energy_regen = 0,
             base_ad = 55,

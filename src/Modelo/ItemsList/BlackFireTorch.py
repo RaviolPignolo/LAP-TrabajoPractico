@@ -1,6 +1,6 @@
 from src.Modelo.Item import Item
 
-class BlackFireTorch(Item):
+class BlackfireTorch(Item):
     def __init__(self):
         super().__init__(
             name = "Blackfire Torch",

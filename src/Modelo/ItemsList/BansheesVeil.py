@@ -1,6 +1,6 @@
 from src.Modelo.Item import Item
 
-class BansheeVeil (Item):
+class BansheesVeil (Item):
     def __init__(self):
         super().__init__(
             name = "Banshee's Veil",

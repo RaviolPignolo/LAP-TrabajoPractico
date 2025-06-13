@@ -1,6 +1,6 @@
 from src.Modelo.Item import Item
 
-class BloodletterCurse (Item):
+class BloodlettersCurse (Item):
     def __init__(self):
         super().__init__(
             name = "Bloodletter's Curse",

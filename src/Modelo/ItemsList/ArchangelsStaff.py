@@ -1,6 +1,6 @@
 from src.Modelo.Item import Item
 
-class ArchangelStaff (Item):
+class ArchangelsStaff (Item):
     def __init__(self):
         super().__init__(
             name = "Archangel's Staff",

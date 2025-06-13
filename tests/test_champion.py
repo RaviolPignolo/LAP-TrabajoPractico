@@ -222,9 +222,7 @@ class TestChampion(unittest.TestCase):
         Maokai_mr_inicial = self.Maokai.actual_total_mr
         Karthus_mana_inicial = self.Karthus.actual_mana
         
-        print(f"MR de Maokai: {self.Maokai.actual_total_mr} .")
         self.Karthus.w(self.Maokai)
-        print(f"MR de Maokai: {self.Maokai.actual_total_mr} .")
         
         """
         El efecto de la W no se debe stackear
@@ -235,46 +233,27 @@ class TestChampion(unittest.TestCase):
             
     def test_karthus_e(self):
         
-        print(f"Twitch hp inicial: {self.Twitch.actual_hp}")
         Twitch_hp_inicial = self.Twitch.actual_hp
-        print(f"Karthus AP: {self.Karthus.actual_ap}")
-        print(f"Twitch MR: {self.Twitch.actual_total_mr}")
-        print(f"Karthus mana inicial: {self.Karthus.actual_mana}")
         Karthus_mana_inicial = self.Karthus.actual_mana
         
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.Karthus.e(self.Twitch) # Toggle = True
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.Karthus.e(self.Twitch) # Toggle = False
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.assertLess(self.Twitch.actual_hp, Twitch_hp_inicial)
         self.assertLess(self.Karthus.actual_mana, Karthus_mana_inicial)
         
-        print(f"Karthus mana antes mod: {self.Karthus.actual_mana}")
         self.Karthus.actual_mana = 10
-        print(f"Karthus mana post mod: {self.Karthus.actual_mana}")
         Twitch_hp_inicial_2 = self.Twitch.actual_hp
-        print(f"Twitch hp inicial 2: {self.Twitch.actual_hp}")
         
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.Karthus.e(self.Twitch) # Toggle deberia mantenerse en False despues del último Toggle = False por falta de maná para activarlo
-        print(f"Toggle: {self.Karthus.e_toggle}")
         
         self.assertEqual(self.Twitch.actual_hp, Twitch_hp_inicial_2)
         self.assertEqual(self.Karthus.actual_mana, 10)
         
-        print(f"Karthus mana antes mod: {self.Karthus.actual_mana}")
         self.Karthus.actual_mana = 300
-        print(f"Karthus mana post mod: {self.Karthus.actual_mana}")
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.Karthus.e(self.Twitch) # Toggle = True
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.assertEqual(self.Karthus.e_toggle, True)
         Twitch_hp_inicial_3 = self.Twitch.actual_hp
-        print(f"Twitch hp inicial 3: {self.Twitch.actual_hp}")
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.Karthus.e(self.Twitch) # Toggle = False
-        print(f"Toggle: {self.Karthus.e_toggle}")
         self.assertEqual(self.Karthus.e_toggle, False)
         self.assertLess(self.Twitch.actual_hp, Twitch_hp_inicial_3)
         

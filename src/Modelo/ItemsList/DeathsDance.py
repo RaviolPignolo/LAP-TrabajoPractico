@@ -1,6 +1,6 @@
 from src.Modelo.Item import Item
 
-class DeathDance (Item):
+class DeathsDance (Item):
     def __init__(self):
         super().__init__(
             name = "Death's Dance",
