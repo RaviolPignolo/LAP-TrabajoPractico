@@ -311,6 +311,7 @@ class Champion:
         Return:
             Le resta vida al objetivo correspondiente luego de calcular las resistencias 
         """
+        from src.Main import pantalla_ganador
         daño_total = 0
         
         if(tipo == "TRUE"):
@@ -331,6 +332,15 @@ class Champion:
         daño_total = max(daño_total, 0) #Evita que el daño sea negativo
         Champion.actual_hp -= daño_total 
         Champion.actual_hp = max(Champion.actual_hp, 0) #Evita que la vida sea negativa
+        if Champion.actual_hp == 0:
+            Champion.se_muere()
+            #pantalla_ganador(self)
+    
+    def se_muere (self):
+        """
+        Marca al campeón como muerto estableciendo su atributo 'its_alive' en False.
+        """
+        self.its_alive = False
     
     # Éstos métodos de habilidades están pensados para ser sobre-escritos
     def aa(self, objetivo):

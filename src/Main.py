@@ -3,10 +3,13 @@ from src.Modelo.Item import Item
 from src.Modelo.Champion import load_champion
 from src.Modelo.Item import load_item
 from src.Vista.vistaCampeon import vistaCampeon
+from src.Vista.vistaCampeonList.vistaKarthus import vistaKarthus
 from src.Vista.vistaItem import vistaItem
 from src.Vista.vistaCampeon import champions_list
 from src.Vista.vistaItem import items_list
 from src.Controlador.controlCampeon import controlCampeon
+from src.Modelo import globals as globals_var
+from src.Modelo.ChampionsList.Karthus import Karthus
 import pygame
 import sys
 
@@ -277,6 +280,9 @@ def items_details(item):
 
 def pantalla_juego():
     "Pantalla del juego"
+    
+    globals_var.turno_actual = 1
+    
     CELDA_ANCHO = 80
     CELDA_ALTO = 80
     MAX_CELDAS_X = PANTALLA_ANCHO // CELDA_ANCHO
@@ -294,9 +300,13 @@ def pantalla_juego():
     campeon2_dict = next(c for c in champions_list if c['name'] == campeon2_select)
     
     # Les asigno la imagen, modelo y lógica a los campeones
-    campeon1_vista = vistaCampeon(3 * CELDA_ANCHO, 2 * CELDA_ALTO, campeon1_dict)
+    if campeon1_select == "Karthus":
+        campeon1_modelo = load_champion(campeon1_select)
+        campeon1_vista = vistaKarthus(3 * CELDA_ANCHO, 2 * CELDA_ALTO, campeon1_modelo, None)
+    else:
+        campeon1_modelo = load_champion(campeon1_select)
+        campeon1_vista = vistaCampeon(3 * CELDA_ANCHO, 2 * CELDA_ALTO, campeon1_dict)
     campeon1_control = controlCampeon(campeon1_vista)
-    campeon1_modelo = load_champion(campeon1_select)
     
     campeon2_vista = vistaCampeon(6 * CELDA_ANCHO, 4 * CELDA_ALTO, campeon2_dict)
     campeon2_control = controlCampeon(campeon2_vista)
@@ -368,6 +378,19 @@ def pantalla_juego():
                         estado_turno = "esperando"
                         # Lógica de habilidad seleccionada
                 elif estado_turno == "esperando":
+                    globals_var.turno_actual += 1
+                    
+                    for campeon in [campeon1_modelo, campeon2_modelo]:
+                        if isinstance(campeon, Karthus):
+                            campeon.actualizar_estado()
+                    
+                    if not campeon1_modelo.its_alive:
+                        pantalla_ganador(campeon2_modelo)
+                        return
+                    if not campeon2_modelo.its_alive:
+                        pantalla_ganador(campeon1_modelo)
+                        return
+                    
                     turno_campeon1 = not turno_campeon1
                     estado_turno = "seleccion_accion"
                     accion_seleccionada = 0
@@ -392,7 +415,7 @@ def pantalla_juego():
         # Menú de acciones
         if estado_turno == "seleccion_accion":
             menu_y = 550
-            turno_text = f"Turno: {campeon1_modelo.name}" if turno_campeon1 else f"Turno: {campeon2_modelo.name}"
+            turno_text = f"Turno {globals_var.turno_actual}: {campeon1_modelo.name}" if turno_campeon1 else f"Turno {globals_var.turno_actual}: {campeon2_modelo.name}"
             pantalla.blit(FONT.render(turno_text, True, BLANCO),(100, menu_y - 40))
             for i, accion in enumerate(acciones):
                 color = BLANCO if i == accion_seleccionada else GRIS
@@ -502,6 +525,30 @@ def dibujar_bloque_campeon(pantalla, x, y, ancho, alto, campeon_vista, campeon_m
     # Texto recurso
     recurso_text = FONT.render(f"{round(recurso_actual)}/{round(recurso_max)} +{round(recurso_regen,1)}", True, BLANCO)
     pantalla.blit(recurso_text, (barra_x + 10, barra_y2 - 3))
+
+def pantalla_ganador(campeon_ganador):
+    mensaje_ganador = f"¡Ganador {campeon_ganador.name}!"
+    texto = FONT.render(mensaje_ganador, True, BLANCO)
+    rect = texto.get_rect(center = (pantalla.get_width()//2, pantalla.get_height()//2))
+    
+    # Fondo semitransparente
+    overlay = pygame.Surface(pantalla.get_size(), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0 , 180)) #Negro con transparencia
+
+    pantalla.blit(overlay, (0,0))
+    pantalla.blit(texto, rect)
+    
+    pygame.display.update()
+    
+    espera = True
+    while espera:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                espera = False
+                main()
 
 
 if __name__ == '__main__':
