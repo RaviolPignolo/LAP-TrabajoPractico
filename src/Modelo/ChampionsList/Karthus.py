@@ -112,59 +112,28 @@ class Karthus(Champion):
         Enhanced Damage [80/118/156/194/232]
         Mana Cost       [20/25/30/35/40]
         """
-        self.q_mana_cost = 0
-        damage = 0
         tipo = "AP"
-    
-        if(self.q_level == 1):
-            self.q_mana_cost = 20
-            if(self.actual_mana < self.q_mana_cost):
-                return
-            else:
-                super().q()
-                self.actual_mana = max(self.actual_mana - self.q_mana_cost, 0)
-                damage = 80 + (0.7 * self.actual_ap) #Uso el daño potenciado porque al ser 1v1 siempre va a ser una Q aislada
-                super().damage(damage, tipo, Champion)
-                
-        if(self.q_level == 2):
-            mana_cost = 25
-            if(self.actual_mana < self.q_mana_cost):
-                return
-            else:
-                super().q()
-                self.actual_mana = max(self.actual_mana - self.q_mana_cost, 0)
-                damage = 118 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
+        nivel = self.q_level
+        mana_costs = [20, 25, 30, 35, 40]
+        base_damages = [80, 118, 156, 194, 232]
+        ap_ratios = [0.7] * 5
         
-        if(self.q_level == 3):
-            self.q_mana_cost = 30
-            if(self.actual_mana < self.q_mana_cost):
-                return
-            else:
-                super().q()
-                self.actual_mana = max(self.actual_mana - self.q_mana_cost, 0)
-                damage = 156 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
-                
-        if(self.q_level == 4):
-            self.q_mana_cost = 35
-            if(self.actual_mana < self.q_mana_cost):
-                return
-            else:
-                super().q()
-                self.actual_mana = max(self.actual_mana - self.q_mana_cost, 0)
-                damage = 194 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
-                
-        if(self.q_level == 5):
-            self.q_mana_cost = 40
-            if(self.actual_mana < self.q_mana_cost):
-                return
-            else:
-                super().q()
-                self.actual_mana = max(self.actual_mana - self.q_mana_cost, 0)
-                damage = 232 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
+        mana_cost = mana_costs[nivel - 1]
+        damage = base_damages[nivel - 1] + (ap_ratios[nivel - 1] * self.actual_ap)
+        
+        if self.en_pasiva:
+            mana_cost = 0
+        
+        if self.actual_mana < mana_cost:
+            return
+        
+        if Champion is not None:
+            super().q()
+            self.actual_mana = max(self.actual_mana - mana_cost, 0)
+            super().damage(damage, tipo, Champion)
+        else:
+            super().q()
+            self.actual_mana = max(self.actual_mana - mana_cost, 0)
 
     def w(self, Champion):
         """

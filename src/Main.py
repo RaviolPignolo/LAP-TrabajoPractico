@@ -322,6 +322,16 @@ def pantalla_juego():
     habilidad_seleccionada = 0
     habilidades = ["Q", "W", "E", "R"]
     
+    # NUEVO: Variables para selección y animación de la Q de Karthus
+    seleccionando_casilla_q = False
+    q_cursor_x, q_cursor_y = 3, 2  # Por defecto, donde está Karthus
+    q_anim_en_progreso = False
+    q_anim_frame = 0
+    q_anim_pos = (0, 0)
+    q_anim_timer = 0
+    q_anim_duracion = 9  # 3x3 frames
+    
+    
     while True:
         for event in pygame.event.get():
             if (event.type == pygame.QUIT):
@@ -375,8 +385,38 @@ def pantalla_juego():
                     elif event.key == pygame.K_UP:
                         habilidad_seleccionada = (habilidad_seleccionada - 1) % len(habilidades)
                     elif event.key == pygame.K_RETURN:
-                        estado_turno = "esperando"
+                        if habilidades[habilidad_seleccionada] == "Q" and turno_campeon1 and campeon1_modelo.name == "Karthus":
+                            estado_turno = "seleccion_casilla_q"
+                            q_cursor_x, q_cursor_y = campeon1_control.x // CELDA_ANCHO, campeon1_control.y // CELDA_ALTO
+                        else:
+                            estado_turno = "esperando"
                         # Lógica de habilidad seleccionada
+                elif estado_turno == "seleccion_casilla_q":
+                    if event.key == pygame.K_DOWN:
+                        q_cursor_y = min(q_cursor_y + 1, MAX_CELDAS_Y -1)
+                    elif event.key == pygame.K_UP:
+                        q_cursor_y = max(q_cursor_y - 1, 0)
+                    elif event.key == pygame.K_RIGHT:
+                        q_cursor_x = min(q_cursor_x + 1, MAX_CELDAS_X - 1)
+                    elif event.key == pygame.K_LEFT:
+                        q_cursor_x = max(q_cursor_x - 1, 0)
+                    elif event.key == pygame.K_RETURN:
+                        # Detectar si el otro campeon está en la celda seleccionada
+                        campeon2_celda_x = campeon2_control.x // CELDA_ANCHO
+                        campeon2_celda_y = campeon2_control.y // CELDA_ALTO
+                        if q_cursor_x == campeon2_celda_x and q_cursor_y == campeon2_celda_y:
+                            campeon1_modelo.q(campeon2_modelo)
+                        else:
+                            campeon1_modelo.q(None) # Solo la animación
+                        # Inicia la animación
+                        q_anim_en_progreso = True
+                        q_anim_frame = 0
+                        q_anim_timer = pygame.time.get_ticks()
+                        q_anim_pos = (q_cursor_x, q_cursor_y)
+                        estado_turno = "animacion_q"
+                elif estado_turno == "animacion_q":
+                    # No aceptar input hasta que termine la animación
+                    pass
                 elif estado_turno == "esperando":
                     globals_var.turno_actual += 1
                     
@@ -462,6 +502,22 @@ def pantalla_juego():
             color_recurso=(0, 120, 255) if tipo_recurso2 == "mana" else (255, 220, 0),
             tipo_recurso=tipo_recurso2
         )
+        
+        
+        # Dibuja el icono de la Q como cursos de la habilidad
+        if estado_turno == "seleccion_casilla_q" and campeon1_modelo.name == "Karthus":
+            campeon1_vista.dibujar_cursor_q(pantalla, q_cursor_x, q_cursor_y, CELDA_ANCHO, CELDA_ALTO)
+        
+        # Dibujo la animación de la Q
+        if estado_turno == "animacion_q" and q_anim_en_progreso:
+            campeon1_vista.dibujar_animacion_q(pantalla, q_anim_pos[0], q_anim_pos[1], q_anim_frame, CELDA_ANCHO, CELDA_ALTO)
+            # Avanza los frames cada 80ms
+            if pygame.time.get_ticks() - q_anim_timer > 80:
+                q_anim_frame += 1
+                q_anim_timer = pygame.time.get_ticks()
+                if q_anim_frame >= q_anim_duracion:
+                    q_anim_en_progreso = False
+                    estado_turno = "esperando"
         
         pygame.display.update()
 

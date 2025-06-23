@@ -11,6 +11,10 @@ karthus_abilities = [
     {'name': 'Requiem',         'ability': 'R', 'image': 'src/Vista/Assets/Images/AbilitiesIcon/KarthusAbilityIcon/Karthus_Requiem.png'}
 ]
 
+karthus_animations = {
+    'Q': 'src/Vista/Assets/Images/Animations/KarthusAnimations/Karthus_Q.png'
+}
+
 ability: pygame.Surface
 icono_normal: pygame.Surface
 icono_pasiva = karthus_abilities[0]['image']
@@ -25,6 +29,7 @@ class vistaKarthus(vistaCampeon):
         self.ability = ability
         self.icono_normal = imagen_normal
         self.campeon_modelo = campeon
+        self.animations = karthus_animations
     
     def dibujar(self, pantalla):
         """
@@ -41,3 +46,27 @@ class vistaKarthus(vistaCampeon):
         icono = pygame.image.load(icon_path)
         icono = pygame.transform.scale(icono, (80, 80))
         pantalla.blit(icono, (self.x, self.y))
+    
+    def dibujar_cursor_q(self, pantalla, x, y, celda_ancho, celda_alto):
+        """Dibuja el icono de la Q para usar como cursos y seleccionar donde castearlo"""
+        icon_path = karthus_abilities[1]['image']
+        icono = pygame.image.load(icon_path)
+        icono = pygame.transform.scale(icono, (celda_ancho, celda_alto))
+        pantalla.blit(icono, (x * celda_ancho, y * celda_alto))
+    
+    def dibujar_animacion_q(self, pantalla, x, y, frame, celda_ancho, celda_alto):
+        """Dibuja la animación de la Q en la celda x, y en el frame que se obtiene"""
+        anim_path = self.animations['Q']
+        anim_img = pygame.image.load(anim_path).convert_alpha()
+        cols = 3
+        rows = 3
+        total_frames = cols * rows
+        frame = frame % total_frames
+        frame_w = anim_img.get_width() // cols
+        frame_h = anim_img.get_height() // rows
+        frame_x = (frame % cols) * frame_w
+        frame_y = (frame // cols) * frame_h
+        frame_rect = pygame.Rect(frame_x, frame_y, frame_w, frame_h)
+        anim_frame = anim_img.subsurface(frame_rect)
+        anim_frame = pygame.transform.scale(anim_frame, (celda_ancho, celda_alto))
+        pantalla.blit(anim_frame, (x * celda_ancho, y * celda_alto))
