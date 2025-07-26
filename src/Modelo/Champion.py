@@ -337,7 +337,6 @@ class Champion:
         Champion.actual_hp = max(Champion.actual_hp, 0) #Evita que la vida sea negativa
         if Champion.actual_hp == 0:
             Champion.se_muere()
-            #pantalla_ganador(self)
     
     def se_muere (self):
         """

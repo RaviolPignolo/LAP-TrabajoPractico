@@ -360,13 +360,17 @@ def pantalla_juego():
     campeon2_modelo.level_up_ability("E")
     campeon2_modelo.level_up_ability("R")
 
-    """BlackfireTorch = load_item("BlackfireTorch")
+    BlackfireTorch = load_item("BlackfireTorch")
     campeon1_modelo.add_item(BlackfireTorch)
     campeon1_modelo.add_item(BlackfireTorch)
     campeon1_modelo.add_item(BlackfireTorch)
     campeon1_modelo.add_item(BlackfireTorch)
-    campeon1_modelo.add_item(BlackfireTorch)
-    campeon1_modelo.add_item(BlackfireTorch)"""
+
+    Bloodthirster = load_item("Bloodthirster")
+    campeon2_modelo.add_item(Bloodthirster)
+    campeon2_modelo.add_item(Bloodthirster)
+    campeon2_modelo.add_item(Bloodthirster)
+    campeon2_modelo.add_item(Bloodthirster)
     
     while True:
         for event in pygame.event.get():
