@@ -31,10 +31,10 @@ class Karthus(Champion):
             bonus_attack_speed = 0.0211,
         )
     
-    q_level = 1
-    w_level = 1
-    e_level = 1
-    r_level = 1
+    q_level = 0
+    w_level = 0
+    e_level = 0
+    r_level = 0
     
     q_mana_cost = 0
     w_mana_cost = 0
@@ -63,11 +63,11 @@ class Karthus(Champion):
     
     def actualizar_estado(self):
         """
-        Actualiza el estado de Karthus, especialmente durante la pasiva.
+        Actualiza el estado de Karthus durante la pasiva.
         Si han pasado 7 turnos desde que se activó la pasiva, la desactiva y restaura los costos de maná originales.
         """
         if self.en_pasiva and self.turno_inicio_pasiva is not None:
-            if globals_var.turno_actual - self.turno_inicio_pasiva >= 7:
+            if globals_var.turno_actual - self.turno_inicio_pasiva >= (7 * 2):
                 self.en_pasiva = False
                 self.q_mana_cost = self.PREV_Q_MANA_COST
                 self.w_mana_cost = self.PREV_W_MANA_COST
@@ -145,77 +145,29 @@ class Karthus(Champion):
         Wall Lenght          [800/900/1000/1100/1200]
         Move Speed Slow     [40%/50%/60%/70%/80%]
         """
-        self.w_mana_cost = 70
-                
-        if(self.w_level == 1):
-            if(self.actual_mana < self.w_mana_cost):
+        nivel = self.w_level
+        mana_costs = [70] * 5
+        mr_reduction = [0.25] * 5
+
+        mana_cost = mana_costs[nivel - 1]
+
+        if self.en_pasiva:
+            mana_cost = 0
+
+        if self.actual_mana < mana_cost:
+            return
+
+        if Champion is not None:
+            super().w()
+            self.actual_mana = max(self.actual_mana - mana_cost, 0)
+            if Champion.actual_total_mr <= 0:
                 return
             else:
-                super().w()
-                self.actual_mana = max(self.actual_mana - self.w_mana_cost, 0)
+                Champion.actual_total_mr = (Champion.actual_total_mr * (1 - mr_reduction[nivel - 1]))
+        else:
+            super().w()
+            self.actual_mana = max(self.actual_mana - mana_cost, 0)
 
-                # Aplicar lógica de reducción de movimiento
-
-                if(Champion.actual_total_mr <= 0):
-                    return
-                else:
-                    Champion.actual_total_mr = (Champion.actual_total_mr * (1 - 0.25))
-                    
-        if(self.w_level == 2):
-            if(self.actual_mana < self.w_mana_cost):
-                return
-            else:
-                super().w()
-                self.actual_mana = max(self.actual_mana - self.w_mana_cost, 0)
-
-                # Aplicar lógica de reducción de movimiento
-
-                if(Champion.actual_total_mr <= 0):
-                    return
-                else:
-                    Champion.actual_total_mr = (Champion.actual_total_mr * (1 - 0.25))
-        
-        if(self.w_level == 3):
-            if(self.actual_mana < self.w_mana_cost):
-                return
-            else:
-                super().w()
-                self.actual_mana = max(self.actual_mana - self.w_mana_cost, 0)
-
-                # Aplicar lógica de reducción de movimiento
-
-                if(Champion.actual_total_mr <= 0):
-                    return
-                else:
-                    Champion.actual_total_mr = (Champion.actual_total_mr * (1 - 0.25))
-                    
-        if(self.w_level == 4):
-            if(self.actual_mana < self.w_mana_cost):
-                return
-            else:
-                super().w()
-                self.actual_mana = max(self.actual_mana - self.w_mana_cost, 0)
-
-                # Aplicar lógica de reducción de movimiento
-
-                if(Champion.actual_total_mr <= 0):
-                    return
-                else:
-                    Champion.actual_total_mr = (Champion.actual_total_mr * (1 - 0.25))
-                    
-        if(self.w_level == 5):
-            if(self.actual_mana < self.w_mana_cost):
-                return
-            else:
-                super().w()
-                self.actual_mana = max(self.actual_mana - self.w_mana_cost, 0)
-
-                # Aplicar lógica de reducción de movimiento
-
-                if(Champion.actual_total_mr <= 0):
-                    return
-                else:
-                    Champion.actual_total_mr = (Champion.actual_total_mr * (1 - 0.25))
 
     def e(self, Champion):
         """
@@ -230,69 +182,29 @@ class Karthus(Champion):
         Mana Restore        [10/20/30/40/50]   Ver cómo aplicarlo
         Mana Cost           [30/42/54/66/78]
         """
-        self.e_mana_cost = 0
-        damage = 0
         tipo = "AP"
+        nivel = self.e_level
+        mana_costs = [30, 42, 54, 66, 78]
+        base_damages = [30, 50, 70, 90, 110]
+        ap_ratios = [0.05] * 5
 
-        if(self.e_toggle == True):
-            damage = 7.5 + (0.05 * self.actual_ap)
+        mana_cost = mana_costs[nivel - 1]
+        damage = base_damages[nivel - 1] + (ap_ratios[nivel - 1] * self.actual_ap)
+
+        if self.en_pasiva:
+            mana_cost = 0
+        
+        if self.actual_mana < mana_cost:
+            return
+
+        if Champion is not None:
+            super().e()
+            self.actual_mana = max(self.actual_mana - mana_cost, 0)
             super().damage(damage, tipo, Champion)
-            self.e_toggle = False
         else:
-            if(self.e_level == 1):
-                self.e_mana_cost = 30
-                if(self.actual_mana < self.e_mana_cost):
-                    return
-                else:
-                    super().e()
-                    self.e_toggle = True
-                    self.actual_mana = max(self.actual_mana - self.e_mana_cost, 0)
-                    damage = (7.5 + (0.05 * self.actual_ap)) * 4 # La idea es obtener el daño x segundo y cuando se desactive activar el ultimo tick
-                    super().damage(damage, tipo, Champion)
-            
-            if(self.e_level == 2):
-                self.e_mana_cost = 42
-                if(self.actual_mana < self.e_mana_cost):
-                    return
-                else:
-                    super().e()
-                    self.e_toggle = True
-                    self.actual_mana = max(self.actual_mana - self.e_mana_cost, 0)
-                    damage = (12.5 + (0.05 * self.actual_ap)) * 4
-                    super().damage(damage, tipo, Champion)
-                    
-            if(self.e_level == 3):
-                self.e_mana_cost = 54
-                if(self.actual_mana < self.e_mana_cost):
-                    return
-                else:
-                    super().e()
-                    self.e_toggle = True
-                    self.actual_mana = max(self.actual_mana - self.e_mana_cost, 0)
-                    damage = (17.5 + (0.05 * self.actual_ap)) * 4
-                    super().damage(damage, tipo, Champion)
-                    
-            if(self.e_level == 4):
-                self.e_mana_cost = 66
-                if(self.actual_mana < self.e_mana_cost):
-                    return
-                else:
-                    super().e()
-                    self.e_toggle = True
-                    self.actual_mana = max(self.actual_mana - self.e_mana_cost, 0)
-                    damage = (22.5 + (0.05 * self.actual_ap)) * 4
-                    super().damage(damage, tipo, Champion)
-                    
-            if(self.e_level == 5):
-                self.e_mana_cost = 78
-                if(self.actual_mana < self.e_mana_cost):
-                    return
-                else:
-                    super().e()
-                    self.e_toggle = True
-                    self.actual_mana = max(self.actual_mana - self.e_mana_cost, 0)
-                    damage = (27.5 + (0.05 * self.actual_ap)) * 4
-                    super().damage(damage, tipo, Champion)
+            super().e()
+            self.actual_mana = max(self.actual_mana - mana_cost, 0)
+
 
     def r(self, Champion):
         """
@@ -302,33 +214,21 @@ class Karthus(Champion):
         Damage      [200/350/500]
         Cooldown    [200/180/160] (Starts on-cast)
         """
-        self.r_mana_cost = 100
-        damage = 0
-        tipo= "AP"
+        tipo = "AP"
+        nivel = self.r_level
+        mana_costs = [100] * 3
+        base_damages = [200, 350, 500]
+        ap_ratios = [0.7] * 3
+
+        mana_cost = mana_costs[nivel - 1]
+        damage = base_damages[nivel - 1] + (ap_ratios[nivel - 1] * self.actual_ap)
+
+        if self.en_pasiva:
+            mana_cost = 0
         
-        if(self.r_level == 1):
-            if(self.actual_mana < self.r_mana_cost):
-                return
-            else:
-                super().r()
-                self.actual_mana = max(self.actual_mana - self.r_mana_cost, 0)
-                damage = 200 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
-                
-        elif(self.r_level == 2):
-            if(self.actual_mana < self.r_mana_cost):
-                return
-            else:
-                super().r()
-                self.actual_mana = max(self.actual_mana - self.r_mana_cost, 0)
-                damage = 350 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
-                
-        elif(self.r_level == 3):
-            if(self.actual_mana < self.r_mana_cost):
-                return
-            else:
-                super().r()
-                self.actual_mana = max(self.actual_mana - self.r_mana_cost, 0)
-                damage = 500 + (0.7 * self.actual_ap)
-                super().damage(damage, tipo, Champion)
+        if self.actual_mana < mana_cost:
+            return
+        
+        super().r()
+        self.actual_mana = max(self.actual_mana - mana_cost, 0)
+        super().damage(damage, tipo, Champion)

@@ -10,10 +10,13 @@ from src.Vista.vistaItem import items_list
 from src.Controlador.controlCampeon import controlCampeon
 from src.Modelo import globals as globals_var
 from src.Modelo.ChampionsList.Karthus import Karthus
+from src.Modelo.ChampionsList.Twitch import Twitch
 import pygame
 import sys
 
+#pygame.mixer.init()
 pygame.init()
+
 
 PANTALLA_ANCHO = 1280
 PANTALLA_ALTO = 720
@@ -331,6 +334,39 @@ def pantalla_juego():
     q_anim_timer = 0
     q_anim_duracion = 9  # 3x3 frames
     
+    campeon1_modelo.level_up()
+    campeon1_modelo.level_up()
+    campeon1_modelo.level_up()
+    campeon1_modelo.level_up()
+    campeon1_modelo.level_up()
+
+    campeon1_modelo.level_up_ability("Q")
+    campeon1_modelo.level_up_ability("E")
+    campeon1_modelo.level_up_ability("Q")
+    campeon1_modelo.level_up_ability("W")
+    campeon1_modelo.level_up_ability("Q")
+    campeon1_modelo.level_up_ability("R")
+
+    campeon2_modelo.level_up()
+    campeon2_modelo.level_up()
+    campeon2_modelo.level_up()
+    campeon2_modelo.level_up()
+    campeon2_modelo.level_up()
+
+    campeon2_modelo.level_up_ability("Q")
+    campeon2_modelo.level_up_ability("E")
+    campeon2_modelo.level_up_ability("W")
+    campeon2_modelo.level_up_ability("E")
+    campeon2_modelo.level_up_ability("E")
+    campeon2_modelo.level_up_ability("R")
+
+    """BlackfireTorch = load_item("BlackfireTorch")
+    campeon1_modelo.add_item(BlackfireTorch)
+    campeon1_modelo.add_item(BlackfireTorch)
+    campeon1_modelo.add_item(BlackfireTorch)
+    campeon1_modelo.add_item(BlackfireTorch)
+    campeon1_modelo.add_item(BlackfireTorch)
+    campeon1_modelo.add_item(BlackfireTorch)"""
     
     while True:
         for event in pygame.event.get():
@@ -388,6 +424,9 @@ def pantalla_juego():
                         if habilidades[habilidad_seleccionada] == "Q" and turno_campeon1 and campeon1_modelo.name == "Karthus":
                             estado_turno = "seleccion_casilla_q"
                             q_cursor_x, q_cursor_y = campeon1_control.x // CELDA_ANCHO, campeon1_control.y // CELDA_ALTO
+                        elif habilidades[habilidad_seleccionada] == "R" and not turno_campeon1 and campeon2_modelo.name == "Twitch":
+                            campeon2_modelo.r(globals_var.turno_actual)
+                            estado_turno = "esperando"
                         else:
                             estado_turno = "esperando"
                         # Lógica de habilidad seleccionada
@@ -423,6 +462,8 @@ def pantalla_juego():
                     for campeon in [campeon1_modelo, campeon2_modelo]:
                         if isinstance(campeon, Karthus):
                             campeon.actualizar_estado()
+                        if isinstance(campeon, Twitch):
+                            campeon.actualizar_estado_r(globals_var.turno_actual)
                     
                     if not campeon1_modelo.its_alive:
                         pantalla_ganador(campeon2_modelo)
@@ -551,7 +592,11 @@ def dibujar_bloque_campeon(pantalla, x, y, ancho, alto, campeon_vista, campeon_m
     # Fondo barra vida
     pygame.draw.rect(pantalla, (40, 60, 40), (barra_x, barra_y, barra_ancho, barra_alto), border_radius=6)
     # Barra vida
-    vida_width = int(barra_ancho * vida_actual / vida_max)
+    if vida_max > 0:
+        vida_width = int(barra_ancho * vida_actual / vida_max)
+    else:
+        vida_width = 0
+    vida_width = max(0, min(vida_width, barra_ancho))  # Limitar el ancho para que no se pase del marco
     pygame.draw.rect(pantalla, color_vida, (barra_x, barra_y, vida_width, barra_alto), border_radius=6)
     # Texto vida
     vida_text = FONT.render(f"{round(vida_actual)}/{round(vida_max)} +{round(vida_regen,1)}", True, BLANCO)
@@ -577,10 +622,28 @@ def dibujar_bloque_campeon(pantalla, x, y, ancho, alto, campeon_vista, campeon_m
         recurso_width = int(barra_ancho * recurso_actual / recurso_max)
     else:
         recurso_width = 0
+    recurso_width = max(0, min(recurso_width, barra_ancho))  # Limitar el ancho para que no se pase del marco
     pygame.draw.rect(pantalla, color_recurso, (barra_x, barra_y2, recurso_width, barra_alto), border_radius=6)
     # Texto recurso
     recurso_text = FONT.render(f"{round(recurso_actual)}/{round(recurso_max)} +{round(recurso_regen,1)}", True, BLANCO)
     pantalla.blit(recurso_text, (barra_x + 10, barra_y2 - 3))
+
+    # Mostrar el daño recibido
+    if hasattr(campeon_modelo, "ultimo_danio_recibido") and campeon_modelo.ultimo_danio_recibido:
+        valor, tipo = campeon_modelo.ultimo_danio_recibido
+        tiempo = campeon_modelo.tiempo_ultimo_danio
+        ahora = pygame.time.get_ticks()
+        if ahora - tiempo < 1000:
+            if tipo == "AD":
+                color = (255, 140, 0)
+            elif tipo == "AP":
+                color = (0, 200, 255)
+            else:
+                color = (BLANCO)
+            texto = FONT.render(f"-{int(valor)}", True, color)
+            pantalla.blit(texto, (x + ancho // 2, y - 20))
+        else:
+            campeon_modelo.ultimo_danio_recibido = None
 
 def pantalla_ganador(campeon_ganador):
     mensaje_ganador = f"¡Ganador {campeon_ganador.name}!"

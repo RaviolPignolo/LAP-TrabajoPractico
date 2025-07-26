@@ -1,3 +1,4 @@
+
 import pygame
 from src.Modelo.ChampionsList.Karthus import Karthus
 from src.Vista.vistaCampeon import vistaCampeon
@@ -15,6 +16,10 @@ karthus_animations = {
     'Q': 'src/Vista/Assets/Images/Animations/KarthusAnimations/Karthus_Q.png'
 }
 
+karthus_sounds = {
+    'P': 'src/Vista/Assets/Sounds/KarthusSounds/Karthus_P.ogg'
+}
+
 ability: pygame.Surface
 icono_normal: pygame.Surface
 icono_pasiva = karthus_abilities[0]['image']
@@ -30,6 +35,7 @@ class vistaKarthus(vistaCampeon):
         self.icono_normal = imagen_normal
         self.campeon_modelo = campeon
         self.animations = karthus_animations
+        #self.pasiva_frame_anterior = False
     
     def dibujar(self, pantalla):
         """
@@ -41,6 +47,8 @@ class vistaKarthus(vistaCampeon):
         """
         if getattr(self.campeon_modelo, 'en_pasiva', False):
             icon_path = icono_pasiva
+            #sonido = pygame.mixer.Sound(karthus_sounds['P'])
+            #sonido.play()
         else:
             icon_path = self.icono_normal
         icono = pygame.image.load(icon_path)

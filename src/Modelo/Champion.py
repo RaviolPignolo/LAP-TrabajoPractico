@@ -153,6 +153,8 @@ class Champion:
         self.actual_bonus_attack_speed_external = 0.00
         self.actual_total_bonus_attack_speed = 0
         self.inventory = [None] * 6 # Iniciación del inventario
+        self.ultimo_danio_recibido = None
+        self.tiempo_ultimo_danio = 0
     
     def level_up(self):
         """
@@ -331,6 +333,7 @@ class Champion:
         
         daño_total = max(daño_total, 0) #Evita que el daño sea negativo
         Champion.actual_hp -= daño_total 
+        Champion.recibir_danio(daño_total, tipo)
         Champion.actual_hp = max(Champion.actual_hp, 0) #Evita que la vida sea negativa
         if Champion.actual_hp == 0:
             Champion.se_muere()
@@ -342,6 +345,11 @@ class Champion:
         """
         self.its_alive = False
     
+    def recibir_danio(self, valor, tipo):
+        self.ultimo_danio_recibido = (valor, tipo)
+        import pygame
+        self.tiempo_ultimo_danio = pygame.time.get_ticks()
+
     # Éstos métodos de habilidades están pensados para ser sobre-escritos
     def aa(self, objetivo):
         """Método para ataque básico"""
