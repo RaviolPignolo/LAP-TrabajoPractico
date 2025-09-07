@@ -1,8 +1,21 @@
-# -=-=-= Tactical-RPG 1v1 entre campones de LoL =-=-=-
+# ⚔️ Tactical-RPG 1v1 entre campeones de League of Legends
 
-Simula un 1v1 entre los 170 campeones de League of Legends actualizado al parche xx.xx
+Simulador de combate 1v1 entre los 170 campeones de League of Legends (actualizado al parche XX.XX).
 
-## Installation
+Este proyecto fue desarrollado como trabajo práctico para la materia **Laboratorio Avanzado de Programación** en la UDC.
+
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)
+![Version](https://img.shields.io/badge/Versión-0.0.1-green)
+![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo-yellow)
+
+---
+## Instalación simple
+
+1. Descargá el archivo `.exe` desde la sección de [Releases](https://github.com/RaviolPignolo/LAP-TrabajoPractico/releases)
+2. Ejecutá el archivo descargado (`TFTdeLaSalada.exe`)
+
+
+## Installation desarrolladores
 
 - Clona el repositorio github
 - Activa el entorno virtual en la consola usando
