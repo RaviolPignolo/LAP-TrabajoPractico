@@ -3,6 +3,7 @@ import pygame
 from src.Modelo.ChampionsList.Karthus import Karthus
 from src.Vista.vistaCampeon import vistaCampeon
 from src.Vista.vistaCampeon import champions_list
+from src.Modelo.globals import resource_path
 
 karthus_abilities = [
     {'name': 'Death Defied',    'ability': 'P', 'image': 'src/Vista/Assets/Images/AbilitiesIcon/KarthusAbilityIcon/Karthus_Death_Defied.png'},
@@ -35,7 +36,7 @@ class vistaKarthus(vistaCampeon):
         self.icono_normal = imagen_normal
         self.campeon_modelo = campeon
         self.animations = karthus_animations
-        #self.pasiva_frame_anterior = False
+        self.pasiva_frame_anterior = False
     
     def dibujar(self, pantalla):
         """
@@ -47,25 +48,25 @@ class vistaKarthus(vistaCampeon):
         """
         if getattr(self.campeon_modelo, 'en_pasiva', False):
             icon_path = icono_pasiva
-            #sonido = pygame.mixer.Sound(karthus_sounds['P'])
-            #sonido.play()
+            sonido = pygame.mixer.Sound(resource_path(karthus_sounds['P']))
+            sonido.play()
         else:
             icon_path = self.icono_normal
-        icono = pygame.image.load(icon_path)
+        icono = pygame.image.load(resource_path(icon_path))
         icono = pygame.transform.scale(icono, (80, 80))
         pantalla.blit(icono, (self.x, self.y))
     
     def dibujar_cursor_q(self, pantalla, x, y, celda_ancho, celda_alto):
         """Dibuja el icono de la Q para usar como cursos y seleccionar donde castearlo"""
         icon_path = karthus_abilities[1]['image']
-        icono = pygame.image.load(icon_path)
+        icono = pygame.image.load(resource_path(icon_path))
         icono = pygame.transform.scale(icono, (celda_ancho, celda_alto))
         pantalla.blit(icono, (x * celda_ancho, y * celda_alto))
     
     def dibujar_animacion_q(self, pantalla, x, y, frame, celda_ancho, celda_alto):
         """Dibuja la animación de la Q en la celda x, y en el frame que se obtiene"""
         anim_path = self.animations['Q']
-        anim_img = pygame.image.load(anim_path).convert_alpha()
+        anim_img = pygame.image.load(resource_path(anim_path)).convert_alpha()
         cols = 3
         rows = 3
         total_frames = cols * rows

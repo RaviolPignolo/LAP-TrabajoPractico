@@ -11,10 +11,12 @@ from src.Controlador.controlCampeon import controlCampeon
 from src.Modelo import globals as globals_var
 from src.Modelo.ChampionsList.Karthus import Karthus
 from src.Modelo.ChampionsList.Twitch import Twitch
+from src.Modelo.globals import resource_path
 import pygame
 import sys
 
-#pygame.mixer.init()
+
+pygame.mixer.init()
 pygame.init()
 
 
@@ -25,15 +27,20 @@ NEGRO = (0, 0, 0)
 BLANCO = (255, 255, 255)
 GRIS = (128, 128, 128)
 
-FONT  = pygame.font.Font("src/Vista/Assets/Fonts/BeaufortforLOL-Medium.ttf", 24)
+FONT  = pygame.font.Font(resource_path("src/Vista/Assets/Fonts/BeaufortforLOL-Medium.ttf"), 24)
 
 # Configuración de la pantalla
 pantalla = pygame.display.set_mode((PANTALLA_ANCHO, PANTALLA_ALTO))
-pygame.display.set_caption("TFT de la salada")
+pygame.display.set_caption("TFT de La Salada")
 
 # Opciones principales
 menu_options = ['Iniciar', 'Campeones', 'Items', 'Guía', 'Salir']
 selected_option = 0
+
+background_img = pygame.image.load(resource_path("src/Vista/Assets/Images/general-map-look.jpg"))
+background_img = pygame.transform.scale(background_img, (PANTALLA_ANCHO, PANTALLA_ALTO))
+logo_img = pygame.image.load(resource_path("src/Vista/Assets/Images/tftlogo.png"))
+logo_img = pygame.transform.scale(logo_img, (613, 320))
 
 # Configuración del botón para retroceder
 def back_button_draw(surface, font, color_fondo, color_texto):
@@ -51,14 +58,21 @@ def back_button_event(event, back_button_rect):
 
 
 def menu():
-    pantalla.fill(NEGRO)
+    
+    COLOR_BOTON_SELEC = (244, 162, 86)
+    pantalla.blit(background_img, (0,0))
+    overlay = pygame.Surface((PANTALLA_ANCHO, PANTALLA_ALTO), pygame.SRCALPHA)
+    overlay.fill((0,0,0,120))
+    pantalla.blit(overlay, (0,0))
+    logo_rect = logo_img.get_rect(center=(PANTALLA_ANCHO // 2, 180))
+    pantalla.blit(logo_img, logo_rect)
     for i, option in enumerate(menu_options):
-        if i == selected_option:
-            text  = FONT.render(option, True, BLANCO)
-        else:
-            text = FONT.render(option, True, GRIS)
-        text_rect = text.get_rect(center=(PANTALLA_ANCHO // 2, PANTALLA_ALTO // 2 + i * 40))
+        color = COLOR_BOTON_SELEC if i == selected_option else BLANCO
+        text = FONT.render(option, True, color)
+        text_rect = text.get_rect(center=(PANTALLA_ANCHO // 2, PANTALLA_ALTO // 2 + i * 50))
         pantalla.blit(text, text_rect)
+
+
 
 def main():
     "Menú principal"
@@ -136,7 +150,7 @@ def champion_list_menu():
             y_position = y_offset + row * spacing_y
             
             # Carga y dibujo de la imagen del campeon
-            image = pygame.image.load(Champion['image'])
+            image = pygame.image.load(resource_path(Champion['image']))
             image_rect = image.get_rect(center=(x_position, y_position))
             pantalla.blit(image, image_rect)
             
@@ -193,7 +207,7 @@ def items_list_menu():
             y_position = y_offset + row * spacing_y
             
             # Cargar y dibujar la imagen del item
-            image = pygame.image.load(Item['image'])
+            image = pygame.image.load(resource_path(Item['image']))
             image_rect = image.get_rect(center=(x_position, y_position))
             pantalla.blit(image, image_rect)
             
@@ -222,11 +236,12 @@ def champion_details(champion):
         pantalla.fill(NEGRO)
         back_button_rect = back_button_draw(pantalla, FONT, GRIS, NEGRO)
         
-        image = pygame.image.load(champion['image'])
+        image = pygame.image.load(resource_path(champion['image']))
         image_rect = image.get_rect(center=(100, 200))
         pantalla.blit(image, image_rect)
         
-        champion_info_list = vistaCampeon.base_stats(campeon_instancia)
+        campeon_vista = vistaCampeon(100,200,champion)
+        champion_info_list = campeon_vista.base_stats(campeon_instancia)
         champion_info_list = [
             stat for stat in champion_info_list
             if stat.get("name") not in ocultar_stats
@@ -234,7 +249,7 @@ def champion_details(champion):
         y_offset = 300
         for stat in champion_info_list:
             if stat["icon"]:
-                icon_img = pygame.image.load(stat["icon"])
+                icon_img = pygame.image.load(resource_path(stat["icon"]))
                 icon_img  = pygame.transform.scale(icon_img, (25, 25))
                 pantalla.blit(icon_img, (100, y_offset))
                 text_x = 140
@@ -260,15 +275,16 @@ def items_details(item):
             if back_button_event(event, back_button_rect):
                 return
         
-        image = pygame.image.load(item['image'])
+        image = pygame.image.load(resource_path(item['image']))
         image_rect = image.get_rect(center=(100, 200))
         pantalla.blit(image, image_rect)
         
-        item_info_list = vistaItem.item_info(item_instancia)
+        item_vista = vistaItem(100,200,item)
+        item_info_list = item_vista.item_info(item_instancia)
         y_offset = 300
         for stat in item_info_list:
             if stat["icon"]:
-                icon_img = pygame.image.load(stat["icon"])
+                icon_img = pygame.image.load(resource_path(stat["icon"]))
                 icon_img = pygame.transform.scale(icon_img, (25, 25))
                 pantalla.blit(icon_img, (100, y_offset))
                 text_x = 140
@@ -311,11 +327,11 @@ def pantalla_juego():
         campeon1_vista = vistaCampeon(3 * CELDA_ANCHO, 2 * CELDA_ALTO, campeon1_dict)
     campeon1_control = controlCampeon(campeon1_vista)
     
-    campeon2_vista = vistaCampeon(6 * CELDA_ANCHO, 4 * CELDA_ALTO, campeon2_dict)
+    campeon2_vista = vistaCampeon(12 * CELDA_ANCHO, 2 * CELDA_ALTO, campeon2_dict)
     campeon2_control = controlCampeon(campeon2_vista)
     campeon2_modelo = load_champion(campeon2_select)
     
-    arena_imagen = pygame.image.load('src/Vista/Assets/Images/Arena.png') # Cargo la imagen de la zona de pelea
+    arena_imagen = pygame.image.load(resource_path('src/Vista/Assets/Images/Arena.png')) # Cargo la imagen de la zona de pelea
     arena_imagen = pygame.transform.scale(arena_imagen, (PANTALLA_ANCHO, int(PANTALLA_ALTO / 1.5)))
     
     turno_campeon1 = True
@@ -360,17 +376,17 @@ def pantalla_juego():
     campeon2_modelo.level_up_ability("E")
     campeon2_modelo.level_up_ability("R")
 
-    BlackfireTorch = load_item("BlackfireTorch")
-    campeon1_modelo.add_item(BlackfireTorch)
-    campeon1_modelo.add_item(BlackfireTorch)
-    campeon1_modelo.add_item(BlackfireTorch)
-    campeon1_modelo.add_item(BlackfireTorch)
+    #BlackfireTorch = load_item("BlackfireTorch")
+    #campeon1_modelo.add_item(BlackfireTorch)
+    ##campeon1_modelo.add_item(BlackfireTorch)
+    #campeon1_modelo.add_item(BlackfireTorch)
+    #campeon1_modelo.add_item(BlackfireTorch)
 
-    Bloodthirster = load_item("Bloodthirster")
-    campeon2_modelo.add_item(Bloodthirster)
-    campeon2_modelo.add_item(Bloodthirster)
-    campeon2_modelo.add_item(Bloodthirster)
-    campeon2_modelo.add_item(Bloodthirster)
+    #Bloodthirster = load_item("Bloodthirster")
+    #campeon2_modelo.add_item(Bloodthirster)
+    #campeon2_modelo.add_item(Bloodthirster)
+    #campeon2_modelo.add_item(Bloodthirster)
+    #campeon2_modelo.add_item(Bloodthirster)
     
     while True:
         for event in pygame.event.get():
@@ -493,7 +509,7 @@ def pantalla_juego():
                 rect = pygame.Rect(x, y, CELDA_ANCHO, CELDA_ALTO)
                 pygame.draw.rect(pantalla, BLANCO, rect, 1)
                 
-                # Ésto es para ver las coordenadas de las cuadrillas, no es necesario que el jugador lo vea
+                # Ésto es para ver las coordenadas de las cuadrillas
                 #text = FONT.render(f"{x // CELDA_ANCHO}, {y // CELDA_ALTO}", True, BLANCO)
                 #pantalla.blit(text, (x + 5, y + 5))
         
@@ -572,7 +588,7 @@ def dibujar_bloque_campeon(pantalla, x, y, ancho, alto, campeon_vista, campeon_m
     pygame.draw.rect(pantalla, fondo_color, (x, y, ancho, alto), border_radius=10)
 
     # Icono del campeón
-    icono = pygame.image.load(campeon_vista.icon_path)
+    icono = pygame.image.load(resource_path(campeon_vista.icon_path))
     icono = pygame.transform.scale(icono, (64, 64))
     pantalla.blit(icono, (x + 20, y + 20))
 

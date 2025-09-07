@@ -1,6 +1,7 @@
 import pygame
 from src.Modelo.Champion import Champion
 from src.Vista.stat_icon import stat_icon_list
+from src.Modelo.globals import resource_path
 
 champions_list = [ # Ubicación correspondiente de los iconos de los campeones
     {'name': 'Aatrox',          'image': 'src/Vista/Assets/Images/ChampionIcon/Aatrox_icon.png'},
@@ -36,7 +37,7 @@ class vistaCampeon:
         self.x = x
         self.y = y
         self.icon_path = campeon['image']
-        self.image = pygame.image.load(campeon['image'])
+        self.image = pygame.image.load(resource_path(campeon['image']))
         self.image = pygame.transform.scale(self.image, (CELDA_ANCHO, CELDA_ALTO))
         self.rect = self.image.get_rect(topleft = (self.x, self.y))
 
@@ -44,7 +45,7 @@ class vistaCampeon:
         "Dibuja el icono del campeon"
         pantalla.blit(self.image, self.rect)
 
-    def base_stats(campeon):
+    def base_stats(self, campeon):
         base_stats = {
             "Health" : campeon.base_hp,
             "Health Growth": campeon.base_hp_g,
@@ -74,3 +75,9 @@ class vistaCampeon:
                 icon_path = stat_icon_list.get(stat_name, None)
                 stats_lines.append({"name": stat_name, "icon": icon_path, "value": f"{stat_name}: {stat_value}"})
         return stats_lines
+    
+    def dibujar_cursor_q(self, *args, **kwargs):
+        pass
+
+    def dibujar_animacion_q(self, *args, **kwargs):
+        pass

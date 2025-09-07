@@ -17,6 +17,15 @@ Simula un 1v1 entre los 170 campeones de League of Legends actualizado al parche
     pip install -r requirements.txt
 ```
 
+## Correr el programa
+
+- Posicionene en la consola en 'LAP-TrabajoPractico'
+- Ejecute el siguiente comando para iniciar el juego
+
+```python
+    python3 -m src.Main
+```
+
 ## Tests
 
 - Podes ejectutar todos los test con el comando

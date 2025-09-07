@@ -22,3 +22,12 @@ rad.json
 TestResults.xml
 #Python virtual environment
 venv/
+#PyInstaller
+build/
+dist/
+*.spec
+#Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

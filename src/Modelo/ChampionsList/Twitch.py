@@ -17,7 +17,7 @@ class Twitch(Champion):
             base_mana_regen_g = 0.7,
             base_energy = 0,
             base_energy_regen = 0,
-            base_ad = 59, #59
+            base_ad = 359, #59
             base_ad_g = 3.1,
             base_armor = 27,
             base_armor_g = 4.2,
