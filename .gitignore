@@ -25,6 +25,7 @@ venv/
 #PyInstaller
 build/
 dist/
+output/
 *.spec
 #Python
 __pycache__/

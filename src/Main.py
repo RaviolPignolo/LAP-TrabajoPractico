@@ -16,7 +16,7 @@ import pygame
 import sys
 
 
-pygame.mixer.init()
+#pygame.mixer.init()
 pygame.init()
 
 
@@ -34,7 +34,7 @@ pantalla = pygame.display.set_mode((PANTALLA_ANCHO, PANTALLA_ALTO))
 pygame.display.set_caption("TFT de La Salada")
 
 # Opciones principales
-menu_options = ['Iniciar', 'Campeones', 'Items', 'Guía', 'Salir']
+menu_options = ['Iniciar', 'Campeones', 'Items', 'Salir']
 selected_option = 0
 
 background_img = pygame.image.load(resource_path("src/Vista/Assets/Images/general-map-look.jpg"))
@@ -339,7 +339,7 @@ def pantalla_juego():
     accion_seleccionada = 0
     acciones = ["Moverse", "Ataque básico", "Habilidad"]
     habilidad_seleccionada = 0
-    habilidades = ["Q", "W", "E", "R"]
+    habilidades = ["Q", "R"]
     
     # NUEVO: Variables para selección y animación de la Q de Karthus
     seleccionando_casilla_q = False
@@ -376,14 +376,14 @@ def pantalla_juego():
     campeon2_modelo.level_up_ability("E")
     campeon2_modelo.level_up_ability("R")
 
-    #BlackfireTorch = load_item("BlackfireTorch")
-    #campeon1_modelo.add_item(BlackfireTorch)
+    BlackfireTorch = load_item("BlackfireTorch")
+    campeon1_modelo.add_item(BlackfireTorch)
     ##campeon1_modelo.add_item(BlackfireTorch)
     #campeon1_modelo.add_item(BlackfireTorch)
     #campeon1_modelo.add_item(BlackfireTorch)
 
-    #Bloodthirster = load_item("Bloodthirster")
-    #campeon2_modelo.add_item(Bloodthirster)
+    Bloodthirster = load_item("Bloodthirster")
+    campeon2_modelo.add_item(Bloodthirster)
     #campeon2_modelo.add_item(Bloodthirster)
     #campeon2_modelo.add_item(Bloodthirster)
     #campeon2_modelo.add_item(Bloodthirster)

@@ -48,8 +48,8 @@ class vistaKarthus(vistaCampeon):
         """
         if getattr(self.campeon_modelo, 'en_pasiva', False):
             icon_path = icono_pasiva
-            sonido = pygame.mixer.Sound(resource_path(karthus_sounds['P']))
-            sonido.play()
+            #sonido = pygame.mixer.Sound(resource_path(karthus_sounds['P']))
+            #sonido.play()
         else:
             icon_path = self.icono_normal
         icono = pygame.image.load(resource_path(icon_path))
